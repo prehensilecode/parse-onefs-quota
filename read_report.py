@@ -2,8 +2,8 @@
 import sys
 import os
 import xml.etree.ElementTree as ET
-import xmltodict, json
 import grp
+import delorean
 
 REPORT_FN = "adhoc_quota_report_1649442443.xml"
 
@@ -11,10 +11,11 @@ tree = ET.parse(REPORT_FN)
 root = tree.getroot()
 
 print(root)
-print(tree)
+print(f"root.attrib['time'] = {root.attrib['time']} = {delorean.epoch(int(root.attrib['time'])).shift('US/Eastern')}")
 
-GIGA = 1024*1024*1024
-TERA = 1024 * GIGA
+MEGA = 1024 * 1024
+GIGA = MEGA * 1024
+TERA = GIGA * 1024
 
 
 for child in root:
