@@ -45,8 +45,7 @@ def main():
                 if gid > 9999:
                     print(f"group={gr_name} ({gid})")
                     for usage in domain.findall('usage'):
-                        if (usage.attrib['resource'] == 'physical' or
-                           usage.attrib['resource'] == 'logical'):
+                        if usage.attrib['resource'] in ('physical', 'logical'):
                             print_usage_maybe(usage)
 
 
