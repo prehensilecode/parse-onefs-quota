@@ -34,8 +34,8 @@ def main():
     tree = ET.parse(REPORT_FN)
     root = tree.getroot()
 
-    print(root)
-    print(f"root.attrib['time'] = {root.attrib['time']} = {delorean.epoch(int(root.attrib['time'])).shift('US/Eastern')}")
+    print("Report time:",
+          f"{delorean.epoch(int(root.attrib['time'])).shift('US/Eastern').datetime.strftime('%Y-%m-%d %X %Z')}")
 
     for child in root:
         for domain in child.findall('domain'):
@@ -45,9 +45,8 @@ def main():
                 if gid > 9999:
                     print(f"group={gr_name} ({gid})")
                     for usage in domain.findall('usage'):
-                        if usage.attrib['resource'] == 'physical':
-                            print_usage_maybe(usage)
-                        if usage.attrib['resource'] == 'logical':
+                        if (usage.attrib['resource'] == 'physical' or
+                           usage.attrib['resource'] == 'logical'):
                             print_usage_maybe(usage)
 
 
