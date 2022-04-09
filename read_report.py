@@ -41,8 +41,8 @@ def main():
         for domain in child.findall('domain'):
             if domain.attrib['type'] == 'group':
                 gid = int(domain.attrib['id'])
-                gr_name = grp.getgrgid(gid).gr_name
                 if gid > 9999:
+                    gr_name = grp.getgrgid(gid).gr_name
                     print(f"group={gr_name} ({gid})")
                     for usage in domain.findall('usage'):
                         if usage.attrib['resource'] in ('physical', 'logical'):
