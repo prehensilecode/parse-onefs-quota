@@ -9,6 +9,10 @@ delorean = "*"
 xmljson = "*"
 
 [dev-packages]
+python-lsp-server = "*"
+flake8 = "*"
+epc = "*"
+importmagic = "*"
 
 [requires]
 python_version = "3.9"
