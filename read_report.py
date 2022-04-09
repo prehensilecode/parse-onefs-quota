@@ -37,17 +37,17 @@ def main():
     print("Report time:",
           f"{delorean.epoch(int(root.attrib['time'])).shift('US/Eastern').datetime.strftime('%Y-%m-%d %X %Z')}")
 
-    for child in root:
-        for domain in child.findall('domain'):
-            if domain.attrib['type'] == 'group':
-                gid = int(domain.attrib['id'])
-                if gid > 9999:
-                    gr_name = grp.getgrgid(gid).gr_name
-                    print(f"group={gr_name} ({gid})")
-                    for usage in domain.findall('usage'):
-                        if usage.attrib['resource'] in ('physical', 'logical'):
-                            print_usage_maybe(usage)
-
+    MINGID = 10000
+    for domain in root.iter('domain'):
+        if domain.attrib['type'] == 'group':
+            gid = int(domain.attrib['id'])
+            # research groups have GIDs starting at 10001
+            if gid > MINGID:
+                gr_name = grp.getgrgid(gid).gr_name
+                print(f"group={gr_name} ({gid})")
+                for usage in domain.findall('usage'):
+                    if usage.attrib['resource'] in ('physical', 'logical'):
+                        print_usage_maybe(usage)
 
 
 if __name__ == '__main__':
