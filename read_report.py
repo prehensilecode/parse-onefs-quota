@@ -10,22 +10,22 @@ def print_usage_maybe(usage: ET.Element):
 
     usage_type = usage.attrib['resource']
 
-    KILO = 1024
-    MEGA = KILO * KILO
-    GIGA = MEGA * KILO
-    TERA = GIGA * KILO
+    KIBI = 1024
+    MEBI = KIBI * KIBI
+    GIBI = MEBI * KIBI
+    TEBI = GIBI * KIBI
 
     du = int(usage.text)
-    if du < KILO:
+    if du < KIBI:
         print(f"  {usage_type} usage = {du} Bytes")
-    elif du < MEGA:
-        print(f"  {usage_type} usage = {du} Bytes = {float(du)/KILO:.4f} kiB")
-    elif du < GIGA:
-        print(f"  {usage_type} usage = {du} Bytes = {float(du)/MEGA:.4f} MiB")
-    elif du < TERA:
-        print(f"  {usage_type} usage = {du} Bytes = {float(du)/GIGA:.4f} GiB")
+    elif du < MEBI:
+        print(f"  {usage_type} usage = {du} Bytes = {float(du)/KIBI:.4f} kiB")
+    elif du < GIBI:
+        print(f"  {usage_type} usage = {du} Bytes = {float(du)/MEBI:.4f} MiB")
+    elif du < TEBI:
+        print(f"  {usage_type} usage = {du} Bytes = {float(du)/GIBI:.4f} GiB")
     else:
-        print(f"  {usage_type} usage = {du} Bytes = {float(du)/TERA:.4f} TiB")
+        print(f"  {usage_type} usage = {du} Bytes = {float(du)/TEBI:.4f} TiB")
 
 
 def main():
