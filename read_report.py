@@ -46,6 +46,7 @@ def main():
                 gr_name = grp.getgrgid(gid).gr_name
                 print(f"group={gr_name} ({gid})")
                 for usage in domain.findall('usage'):
+                    # NOTE: du(1) reports physical storage
                     if usage.attrib['resource'] in ('physical', 'logical'):
                         print_usage_maybe(usage)
 
