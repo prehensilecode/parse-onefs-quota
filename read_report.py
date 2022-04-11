@@ -13,15 +13,21 @@ import delorean
 
 debug_p = True
 
+def debug_print_maybe(fstr):
+    global debug_p
+
+    if debug_p:
+        print(eval(f'f"DEBUG: {fstr}"'))
+
+
 def get_list_of_reports(reports_dir):
     global debug_p
 
     reports = glob.glob(reports_dir + '/scheduled_quota_report_*.xml')
     times = [delorean.epoch(int(r.split('.xml')[0].split('_')[-1])).shift('US/Eastern') for r in reports]
 
-    if debug_p:
-        print(f'DEBUG: reports = {reports}')
-        print(f'DEBUG: times = {times}')
+    debug_print_maybe(f'reports = {reports}')
+    debug_print_maybe(f'times = {times}')
 
     retval = list(zip(times, reports))
     retval.sort(key=lambda k: k[0])
@@ -81,9 +87,13 @@ def main():
     reports = get_list_of_reports('./fake_reports')
     print(reports)
 
+    today = delorean.Delorean()
+    last_month = today - datetime.timedelta(days=(today.datetime.day + 1))
+    period_str = last_month.date.strftime('%Y-%m')
+    debug_print_maybe((f'period_str = {period_str}'))
+
     date_of_interest = datetime.date(2022, 4, 9)
-    if debug_p:
-        print(f'DEBUG: date_of_interest = {date_of_interest}')
+    debug_print_maybe(f'date_of_interest = {date_of_interest}')
 
     report_of_interest = [r[1] for r in reports if r[0].date == date_of_interest][0]
     show_usage(report_of_interest)
@@ -93,9 +103,8 @@ def main():
     print('')
 
     for r in reports:
-        if debug_p:
-            print(f'DEBUG: r[0].date = {r[0].date}; report = {r[1]}')
-            print(f'DEBUG: date_of_interest == r[0].date - {date_of_interest == r[0].date}')
+        debug_print_maybe(f'r[0].date = {r[0].date}; report = {r[1]}')
+        debug_print_maybe(f'date_of_interest == r[0].date - {date_of_interest == r[0].date}')
 
         show_usage(r[1])
         print('')
