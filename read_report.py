@@ -1,12 +1,36 @@
 #!/usr/bin/env python3
 import sys
 import os
+import glob
+import re
+from pathlib import Path
 import xml.etree.ElementTree as ET
 import grp
+import datetime
+import pytz
 import delorean
 
 
+debug_p = True
+
+def get_list_of_reports(reports_dir):
+    global debug_p
+
+    reports = glob.glob(reports_dir + '/scheduled_quota_report_*.xml')
+    times = [delorean.epoch(int(r.split('.xml')[0].split('_')[-1])).shift('US/Eastern') for r in reports]
+
+    if debug_p:
+        print(f'DEBUG: reports = {reports}')
+        print(f'DEBUG: times = {times}')
+
+    retval = list(zip(times, reports))
+    retval.sort(key=lambda k: k[0])
+
+    return retval
+
+
 def print_usage_maybe(usage: ET.Element):
+    global debug_p
 
     usage_type = usage.attrib['resource']
 
@@ -28,10 +52,10 @@ def print_usage_maybe(usage: ET.Element):
         print(f"  {usage_type} usage = {du} Bytes = {float(du)/TEBI:.4f} TiB")
 
 
-def main():
-    REPORT_FN = "adhoc_quota_report_1649442443.xml"
+def show_usage(report_fn: str):
+    global debug_p
 
-    tree = ET.parse(REPORT_FN)
+    tree = ET.parse(report_fn)
     root = tree.getroot()
 
     print("Report time:",
@@ -49,6 +73,32 @@ def main():
                     # NOTE: du(1) reports physical storage
                     if usage.attrib['resource'] in ('physical', 'logical'):
                         print_usage_maybe(usage)
+
+
+def main():
+    global debug_p
+
+    reports = get_list_of_reports('./fake_reports')
+    print(reports)
+
+    date_of_interest = datetime.date(2022, 4, 9)
+    if debug_p:
+        print(f'DEBUG: date_of_interest = {date_of_interest}')
+
+    report_of_interest = [r[1] for r in reports if r[0].date == date_of_interest][0]
+    show_usage(report_of_interest)
+
+    print('')
+    print('========================================')
+    print('')
+
+    for r in reports:
+        if debug_p:
+            print(f'DEBUG: r[0].date = {r[0].date}; report = {r[1]}')
+            print(f'DEBUG: date_of_interest == r[0].date - {date_of_interest == r[0].date}')
+
+        show_usage(r[1])
+        print('')
 
 
 if __name__ == '__main__':
