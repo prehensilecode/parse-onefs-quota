@@ -91,6 +91,7 @@ def main():
         print(f'DEBUG: list of reports:')
         for r in reports:
             print('\t', r)
+        print('')
 
     date_of_interest = datetime.date(2022, 4, 9)
     print(f'Picking one report only, on {date_of_interest}')
