@@ -73,7 +73,12 @@ def show_usage(report_fn: str):
             gid = int(domain.attrib['id'])
             # research groups have GIDs starting at 10001
             if gid > MINGID:
-                gr_name = grp.getgrgid(gid).gr_name
+                try:
+                    gr_name = grp.getgrgid(gid).gr_name
+                except KeyError as e:
+                    print(f'ERROR: {e}')
+                    gr_name = f'unknown-{str(gid)}'
+
                 print(f"group={gr_name} ({gid})")
                 for usage in domain.findall('usage'):
                     # NOTE: du(1) reports physical storage
