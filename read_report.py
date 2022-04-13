@@ -73,7 +73,7 @@ def show_usage(report_fn: str):
                 try:
                     gr_name = grp.getgrgid(gid).gr_name
                 except KeyError as e:
-                    print(f'ERROR: {e}')
+                    print(f'WARNING: {e}')
                     gr_name = f'unknown-{str(gid)}'
 
                 print(f"group={gr_name} ({gid})")
