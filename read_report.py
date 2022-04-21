@@ -83,6 +83,32 @@ def show_usage(report_fn: str):
                         print_usage_maybe(usage)
 
 
+def show_brief_usage(report_fn: str):
+    global debug_p
+
+    tree = ET.parse(report_fn)
+    root = tree.getroot()
+
+    print("Report time:",
+          f"{delorean.epoch(int(root.attrib['time'])).shift('US/Eastern').datetime.strftime('%Y-%m-%d %X %Z')}")
+
+    MINGID = 10000
+    for domain in root.iter('domain'):
+        if domain.attrib['type'] == 'group':
+            gid = int(domain.attrib['id'])
+            # research groups have GIDs starting at 10001
+            if gid > MINGID:
+                try:
+                    gr_name = grp.getgrgid(gid).gr_name
+                except KeyError as e:
+                    gr_name = f'unknown-{str(gid)}'
+
+                for usage in domain.findall('usage'):
+                    # NOTE: du(1) reports physical storage
+                    if usage.attrib['resource'] == 'physical':
+                        print(f"{gr_name}\t{int(usage.text)}")
+
+
 def main():
     global debug_p
 
@@ -98,7 +124,7 @@ def main():
 
     report_of_interest = [r[1] for r in reports if r[0].date == date_of_interest][0]
     debug_print_maybe(f'DEBUG: report_of_interest = {report_of_interest}')
-    show_usage(report_of_interest)
+    show_brief_usage(report_of_interest)
 
     print('')
     print('========================================')
